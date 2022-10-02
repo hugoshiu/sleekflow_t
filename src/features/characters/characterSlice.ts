@@ -1,14 +1,17 @@
+import _ from 'lodash';
+
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState, AppThunk } from '@app/store';
-import { getCharacter } from 'rickmortyapi';
+import { RootState, AppThunk } from 'app/store'
+import { getCharacters } from 'rickmortyapi';
 
 type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (...args: any) => Promise<infer R> ? R : any
 
-type RawCharacterRes = AsyncReturnType<typeof getCharacter>;
-type RawCharacter = RawCharacterRes[keyof Pick<RawCharacterRes, 'data'>];
+type RawCharacterRes = AsyncReturnType<typeof getCharacters>;
+type RawCharacterInfo = RawCharacterRes[keyof Pick<RawCharacterRes, 'data'>];
+export type RawCharacters = RawCharacterInfo[keyof Pick<RawCharacterInfo, 'results'>];
 
 export interface CharacterState {
-    data: RawCharacter;
+    data: RawCharacters;
     currentIndex: number;
     status: 'idle' | 'loading' | 'failed';
 }
@@ -22,7 +25,7 @@ const initialState: CharacterState = {
 export const fetchCharactersAsync = createAsyncThunk(
     'characters/fetchCharacters',
     async (page: number = 0) => {
-        const response = await getCharacter(page);
+        const response = await getCharacters({ page: page });
         return response.data;
     }
 );
@@ -42,7 +45,9 @@ export const characterSlice = createSlice({
             })
             .addCase(fetchCharactersAsync.fulfilled, (state, action) => {
                 state.status = 'idle';
-                state.data = action.payload;
+                if (action.payload.results) {
+                    state.data?.push(...action.payload.results);
+                }
             })
             .addCase(fetchCharactersAsync.rejected, (state) => {
                 state.status = 'failed';
@@ -52,22 +57,22 @@ export const characterSlice = createSlice({
 
 export const { setCurrentIndex } = characterSlice.actions;
 
-export const selectCharacterPreview = (state: RootState) => {
-    let data = state.characters.data;
-    if (Array.isArray(data)) {
-        return data?.map((each) => ({
-            'image': each.image,
-            'name': each.name,
-            'species': each.species,
-        }))
-    } else {
-        return [
-            {
-            'image': data.image,
-            'name': data.name,
-            }
-        ]
+export const selectCurrentCharacter = (state: RootState) => {
+    let characters = state.characters.data;
+    if (!characters) {
+        return undefined;
     }
+    return characters[state.characters.currentIndex]
+};
+
+export const selectStatus = (state: RootState) => state.characters.status;
+
+export const selectCharacterPreview = (state: RootState) => {
+    return state.characters.data?.map((each) => ({
+        'image': each.image,
+        'name': each.name,
+        'species': each.species,
+    }))
 }
 
 export default characterSlice.reducer;
