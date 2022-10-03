@@ -4,15 +4,17 @@ import { RawCharacters } from 'features/characters/characterSlice'
 import { ContactPreviewItem } from 'components/ContactPreview';
 
 type ArrayElement<ArrayType extends readonly unknown[] | undefined > = ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
-type TypeRawCharacterPreview = Pick<ArrayElement<RawCharacters>, 'image' | 'name' | 'species'>;
+type TypeRawCharacterPreview = Pick<ArrayElement<RawCharacters>, 'id' | 'image' | 'name' | 'species'>;
 
 interface Props {
     items: Array<TypeRawCharacterPreview> | undefined;
+    handleOnClick: (...args: any) => (e: React.MouseEvent<HTMLButtonElement>) => void;
     isLoading: boolean;
 };
 
 const ContactPreview: React.FC<Props> = ({
     items,
+    handleOnClick,
     isLoading
 }) => {
     if (isLoading) {
@@ -29,9 +31,13 @@ const ContactPreview: React.FC<Props> = ({
 
     return (
         <div className='bg-yellow-50 rounded-lg drop-shadow-md mt-4 max-h-screen overflow-y-auto w-full'>
-            {items?.map((each) => (
-                <button className='flex w-full px-3'>
+            {items?.map((each, index) => (
+                <button 
+                    className='flex w-full px-3 hover:bg-yellow-100'
+                    onClick={handleOnClick(each, index)}
+                >
                     <ContactPreviewItem 
+                        key={each.id}
                         image={each.image}
                         name={each.name}
                         species={each.species}

@@ -69,10 +69,20 @@ export const selectStatus = (state: RootState) => state.characters.status;
 
 export const selectCharacterPreview = (state: RootState) => {
     return state.characters.data?.map((each) => ({
+        'id': each.id,
         'image': each.image,
         'name': each.name,
         'species': each.species,
     }))
+}
+
+export const filterCharacterPreview = (keyword: string, state: RootState) => {
+    return state.characters.data?.map((each) => ({
+        'id': each.id,
+        'image': each.image,
+        'name': each.name,
+        'species': each.species,
+    })).filter(each => each.name.includes(keyword))
 }
 
 export default characterSlice.reducer;

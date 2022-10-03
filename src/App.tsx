@@ -17,6 +17,22 @@ function App() {
                         </Layout>
                     } 
                 />
+                <Route 
+                    path="/contact" 
+                    element={
+                        <Layout>
+                            <Contact />
+                        </Layout>
+                    } 
+                />
+                <Route 
+                    path="/contact/:id" 
+                    element={
+                        <Layout>
+                            <Contact />
+                        </Layout>
+                    } 
+                />
             </Routes>
         </div>
     );
