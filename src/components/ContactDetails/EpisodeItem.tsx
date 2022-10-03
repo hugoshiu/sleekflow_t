@@ -18,6 +18,10 @@ const EpisodeItem: React.FC<Props> = ({
     item,
 }) => {
     // TODO: if item is undefined, render a loader
+
+    if (!item) {
+        return <>I am fetching :( no batch control supported! </>
+    }
     
     return (
         <tr>
