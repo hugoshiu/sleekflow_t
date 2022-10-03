@@ -32,7 +32,8 @@ const ContactPreview: React.FC<Props> = ({
     return (
         <div className='bg-yellow-50 rounded-lg drop-shadow-md mt-4 max-h-screen overflow-y-auto w-full'>
             {items?.map((each, index) => (
-                <button 
+                <button
+                    key={`btn-${index}`}
                     className='flex w-full px-3 hover:bg-yellow-100'
                     onClick={handleOnClick(each, index)}
                 >

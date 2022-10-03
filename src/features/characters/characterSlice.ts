@@ -25,7 +25,7 @@ const initialState: CharacterState = {
 export const fetchCharactersAsync = createAsyncThunk(
     'characters/fetchCharacters',
     async (page: number = 0) => {
-        const response = await getCharacters({ page: page });
+        const response = await getCharacters({ page: page }); // TODO: handle failure
         return response.data;
     }
 );
